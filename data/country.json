@@ -23,7 +23,7 @@
   {
     "image": "https://cdn.statically.io/img/canitravel.net/img/countries/full/GB.jpg?w=350&f=auto",
     "status": "Restricted",
-    "country": "United Kingdom",
+    "country": "United Kingdom of Great Britain and Northern Ireland",
     "description": "",
     "moreDetails": "Quarantine required"
   },
@@ -506,7 +506,7 @@
   {
     "image": "https://cdn.statically.io/img/canitravel.net/img/countries/full/VN.jpg?w=600&f=auto",
     "status": "Closed",
-    "country": "Viet Nam",
+    "country": "Vietnam",
     "description": "Tourists not allowed",
     "moreDetails": ""
   },
