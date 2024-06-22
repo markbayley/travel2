@@ -21,14 +21,15 @@ export default function Home() {
   const [selectedSorting, setSelectedSorting] = useState();
   const [activeFilters, setActiveFilters] = useState([]);
   const filterButtons = ["Europe", "Americas", "Africa", "Asia", "Oceania"];
-  const sortButtons = [ "Population", "Rating", "Area", "Favorites"];
-  const detailButtons = ["Food", "People", "Culture", "Nature", "Travel"]
+  const sortButtons = ["Population", "Rating", "Area", "Favorites"];
+  const detailButtons = ["Food", "People", "Culture", "Nature", "Travel"];
   const [showDetail, setShowDetail] = useState(false);
-  const [showMap, setShowMap] = useState(false)
+  const [showMap, setShowMap] = useState(false);
 
-  const [mainImage, setMainImage] = useState()
+  const [mainImage, setMainImage] = useState();
 
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedCountryDetail, setSelectedCountryDetail] = useState({});
 
   let [photos, setPhotos] = useState([]);
   let [query, setQuery] = useState("");
@@ -93,34 +94,34 @@ export default function Home() {
     setSearchedCountries(updatedCountries);
   }, [countryData, searchValue]);
 
-  // const superagent = require("superagent");
-  // const clientID = "PvvWIfrMMfNqoEEuVve3X6KE1gksd31-C1Pn-SP3yL4";
+  const superagent = require("superagent");
+  const clientID = "PvvWIfrMMfNqoEEuVve3X6KE1gksd31-C1Pn-SP3yL4";
 
-  // const simpleGet = (options) => {
-  //   superagent.get(options.url).then(function (res) {
-  //     if (options.onSuccess) options.onSuccess(res);
-  //   });
-  // };
+  const simpleGet = (options) => {
+    superagent.get(options.url).then(function (res) {
+      if (options.onSuccess) options.onSuccess(res);
+    });
+  };
 
-  // const numberOfPhotos = 9;
-  // const url =
-  //   "https://api.unsplash.com/photos/random/?count=" +
-  //   numberOfPhotos +
-  //   "&client_id=" +
-  //   clientID;
+  const numberOfPhotos = 3;
+  const url =
+    "https://api.unsplash.com/photos/random/?count=" +
+    numberOfPhotos +
+    "&client_id=" +
+    clientID;
 
-  // useEffect(() => {
-  //   const photosUrl = selectedCountry
-  //     ? `${url}&query=${selectedCountry + query}`
-  //     : url;
+  useEffect(() => {
+    const photosUrl = selectedCountry
+      ? `${url}&query=${selectedCountry + query}`
+      : url;
 
-  //   simpleGet({
-  //     url: photosUrl,
-  //     onSuccess: (res) => {
-  //       setPhotos(res.body);
-  //     },
-  //   });
-  // }, [selectedCountry, query, url]);
+    simpleGet({
+      url: photosUrl,
+      onSuccess: (res) => {
+        setPhotos(res.body);
+      },
+    });
+  }, [selectedCountry, query, url]);
 
   let filteredResults = searchedCountries;
 
@@ -156,20 +157,23 @@ export default function Home() {
     selectedRegion,
     "selectedSorting",
     selectedSorting,
-    "searchedCountries",
-    searchedCountries,
+    // "searchedCountries",
+    // searchedCountries,
     "selectedCountry",
     selectedCountry,
+    "selectedCountryDetail",
+    selectedCountryDetail,
     "Photos",
-    photos
+    photos,
+    "showDetail",
+    showDetail
   );
 
   const clickHandler = (item) => {
-    setShowDetail(item);
+    setShowDetail(true);
     setSelectedCountry(item.name);
+    setSelectedCountryDetail(item);
   };
-
-  console.log("showDetail", showDetail);
 
   return (
     <>
@@ -198,116 +202,65 @@ export default function Home() {
 
         {showDetail ? (
           //IMAGE GALLERY
-          <section >
+          <section>
             <div className="flex flex-col md:flex-row gap-x-4   md:border-4">
-            <div
-              //key={i}
-              // onClick={() => clickHandler(photo)}
-              className="relative  flex-1 min-w-[300px] lg:min-w-[40vw]  flex-grow"
-            >
-              {/* {showDetail && ( */}
-              <Image
-                fill
-                style={{ objectFit: "cover" }}
-                // src={showDetail.travel}
-                src={mainImage ? mainImage : showDetail.travel}
-                // alt={country.name}
-                className="rounded hover:opacity-90 shadow-xl "
-              />
-              {/* )} */}
-              <div className="absolute top-2 left-0 px-2 py-1 rounded-r text-white bg-amber-500">
-                {selectedCountry}
+              <div
+                //key={i}
+                onClick={() => clickHandler(photo)}
+                className="relative  flex-1 min-w-[300px] lg:min-w-[40vw]  flex-grow"
+              >
+                {showDetail && (
+                <Image
+                  fill
+                  style={{ objectFit: "cover" }}
+                  // src={showDetail.travel}
+                  src={mainImage ? mainImage : selectedCountryDetail.travel}
+                  alt="large-photo"
+                  className="rounded hover:opacity-90 shadow-xl "
+                />
+                )} 
+                <div className="absolute top-2 left-0 px-2 py-1 rounded-r text-white bg-amber-500">
+                  {selectedCountry}
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4  justify-end">
+                {photos.slice(0, 3).map((photo, i) => (
+                // {[...Array(9)].map((_, i) => (
+                  <div
+                    key={i}
+                   //onClick={() => clickHandler(photo)}
+                  onClick={() => setMainImage(photo.urls.regular)}
+                    className="relative w-80 md:w-[12vw] aspect-square cursor-pointer "
+                  >
+                    {photo.urls.regular && (
+                    <Image
+                      fill
+                      style={{ objectFit: "cover" }}
+                      src={photo.urls.regular}
+                      // src={selectedCountryDetail.travel}
+                     alt="small-photo"
+                      className="rounded hover:opacity-90 shadow-xl"
+                    />)}
+                  </div>
+                ))}
               </div>
             </div>
-
-            <div className="grid md:grid-cols-3 gap-4  justify-end">
-              {/* {photos.slice(0, 7).map((photo, i) => ( */}
-              {[...Array(9)].map((_, i) => (
-                <div
-                  key={i}
-                  // onClick={() => clickHandler(photo)}
-                  onClick={() => setMainImage(showDetail.travel)}
-                  className="relative w-80 md:w-[12vw] aspect-square cursor-pointer "
-                >
-                  {/* {photo.urls.regular && ( */}
-                  <Image
-                    fill
-                    style={{ objectFit: "cover" }}
-                    // src={photo.urls.regular}
-                    src={showDetail.travel}
-                    // alt={country.name}
-                    className="rounded hover:opacity-90 shadow-xl"
-                  />
-                  {/* )} */}
-                  {/* <div className="absolute top-2 left-0 px-2 py-1 rounded-r text-white bg-amber-500">
-                    {selectedCountry}
-                  </div> */}
-
-                  <div className="flex items-center absolute bottom-1 left-0  text-white ">
-                    {selectedSorting === "Rating" ? (
-                      <div className="flex flex-1 items-center gap-1 px-3 py-1 rounded-r text-white bg-blue-500">
-                        <PiScalesBold className="h-5 w-5" />{" "}
-                        {/* {country?.gini < 35
-                          ? " Good"
-                          : country?.gini < 50
-                          ? " Avg"
-                          : " Poor"} */}
-                      </div>
-                    ) : selectedSorting === "Area" ? (
-                      <div className="flex flex-1 items-center gap-1 px-3 py-1 rounded-r text-white bg-teal-500">
-                        <BsMinecartLoaded className="h-5 w-5" />{" "}
-                        {/* {country?.area < 1000000
-                          ? " Low"
-                          : country?.area < 5000000
-                          ? " Med"
-                          : " High"} */}
-                      </div>
-                    ) : selectedSorting === "Population" ? (
-                      <div className="flex flex-grow items-center gap-1 px-3 py-1 rounded-r text-white bg-rose-500">
-                        <HiUsers className="h-5 w-5" />{" "}
-                        {/* {(country?.population / 1000000).toFixed(2) + "mil"} */}
-                      </div>
-                    ) : null}
-                  </div>
-                  {/* <button
-                key={country.cioc}
-                className="p-2 bg-white rounded-full shadow-lg absolute top-3 right-2"
-                onClick={() => handleFavorites(country)}
-              >
-                {favorited?.includes(country) ? (
-                  <HiHeart className="h-5 w-5 cursor-pointer text-red-400 hover:scale-110 transition duration-200 ease-out active:scale-90" />
-                ) : (
-                  <HiOutlineHeart className="h-5 w-5 cursor-pointer text-red-400 hover:scale-110 transition duration-200 ease-out active:scale-90" />
-                )}
-              </button> */}
-                </div>
-              ))}
-            </div>
-            
-            </div>
-            {/* <div className="w-2/3 border-4">
-        
-        <p >
-          There are many variations of passages of Lorem Ipsum available,
-          but the majority have suffered alteration in some form, by
-          injected humour, or randomised words which don't look even
-          slightly believable. If you are going to use a passage of Lorem
-          Ipsum, you need to be sure there isn't anything embarrassing
-          hidden in the middle of text. All the Lorem Ipsum generators on
-          the Internet tend to repeat predefined chunks as necessary, making
-          this the first true generator on the Internet.
-        </p>
-        </div> */}
-         
-        
           </section>
         ) : showMap ? (
           //MAP SEARCH
           <section>
-            <div className="border-4 flex-1 min-w-[300px] lg:min-w-[80vw]  flex-grow">
-                <TravelMap selectedCountry={selectedCountry} filteredResults={filteredResults}/>
+            <div className="border-4 flex-1 min-w-[300px] lg:min-w-[80vw] flex-grow">
+              <TravelMap
+                searchedCountries={searchedCountries}
+                selectedCountry={selectedCountry}
+                setSelectedCountry={setSelectedCountry}
+                selectedCountryDetail={selectedCountryDetail}
+                filteredResults={filteredResults}
+                showDetail={showDetail}
+                photos={photos}
+              />
             </div>
-
           </section>
         ) : (
           //MAIN SEARCH

@@ -24,7 +24,7 @@ function Filter({
   setMainImage
 }) {
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between w-full my-3 text-xs md:text-sm md:px-20 lg:px-14 xl:px-20 2xl:px-40 ">
+    <div className="flex flex-col md:flex-row items-center justify-between w-full my-6 text-xs md:text-sm md:px-20 lg:px-14 xl:px-20 2xl:px-40 ">
       {showDetail || showMap ? (
         <>
           <div className="flex gap-1 md:gap-2 my-1">
@@ -62,7 +62,7 @@ function Filter({
 
             <button
               onClick={() => {
-                setShowDetail(false), setShowMap(true);
+                setShowDetail(true), setShowMap(true);
               }}
               className={
                 "cursor-pointer active:scale-95 transition duration-200"
@@ -106,6 +106,20 @@ function Filter({
               </button>
             ))}
           </div>
+
+
+          <div className='flex  justify-center items-center'>
+        <input 
+        // value={searchValue}
+        // onChange={(e) => setSearchValue(e.target.value)}
+        type='text'
+        className='text-sm rounded pl-3 w-60 text-gray-800 outline-none py-2 border-2 border-gray-400'
+        placeholder="Search Countries"
+        />
+       </div>
+
+
+
           <div className="flex  gap-1 md:gap-3">
             {sortButtons.map((item, idx) => (
               <button
